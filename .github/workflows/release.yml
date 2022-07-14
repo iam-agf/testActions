@@ -23,6 +23,8 @@ jobs:
         with:
           tag_name: v0.0.0-latest
           delete_release: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-java@v3
         with:
