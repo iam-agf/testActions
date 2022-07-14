@@ -17,6 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Delete the nightly release
+        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          tag_name: v0.0.0-latest
+          delete_release: true
+
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
