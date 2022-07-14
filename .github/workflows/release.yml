@@ -5,10 +5,14 @@ name: CD
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches:
+      - main
+      - development # This will be used later
   workflow_dispatch:
 
 jobs:
-  release_android:
+  pre_release_android:
     name: Building Deposit App (Android)
     runs-on: ubuntu-latest
     steps:
@@ -23,7 +27,6 @@ jobs:
       - run: flutter pub get
       - run: flutter clean
       - run: flutter build apk --release
-      - run: ls build/app/outputs/apk/release/
 
       - name: Create Github Release
         uses: ncipollo/release-action@v1
@@ -31,43 +34,4 @@ jobs:
           tag: v0.0.0-latest
           name: latest
           artifacts: "build/app/outputs/apk/release/*.apk,build/app/outputs/bundle/release/*.aab"
-          prerelease: true
-  build:
-    name: Build APK
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: "12.x"
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v1
-        with:
-          flutter-version: "1.17.5"
-
-      - name: Decoding android/key.properties
-        run: echo "${{ secrets.KEYPROP_PROD }}" | base64 --decode > android/key.properties
-
-      - name: Decoding android/neumodore_key.jks
-        run: echo "${{ secrets.KEYJKS_PROD }}" | base64 --decode > android/key.jks
-
-      - name: Pub Get Packages
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --split-per-abi --release
-
-      - name: Build APPBUNDLE
-        run: flutter build appbundle --release
-
-      - run: ls build/app/outputs/apk/release/
-
-      - name: Create Github Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: v0.0.0-latest
-          name: latest
-          artifacts: "build/app/outputs/apk/release/*.apk,build/app/outputs/bundle/release/*.aab"
-          token: ${{ secrets.RELEASES_TOKEN }}
           prerelease: true
