@@ -8,6 +8,32 @@ on:
   workflow_dispatch:
 
 jobs:
+  release_android:
+    name: Building Deposit App (Android)
+    needs: [ flutter_test ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '18.0.1+10'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      - run: flutter pub get
+      - run: flutter clean
+      - run: flutter build apk --release
+      - run: ls build/app/outputs/apk/release/
+
+      - name: Create Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v0.0.0-latest
+          name: latest
+          artifacts: "build/app/outputs/apk/release/*.apk,build/app/outputs/bundle/release/*.aab"
+          token: ${{ secrets.RELEASES_TOKEN }}
+          prerelease: true
   build:
     name: Build APK
     runs-on: ubuntu-latest
