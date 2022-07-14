@@ -4,8 +4,9 @@ name: CD
 # events but only for the master branch
 on:
   push:
-    tags:
-      - "v*.*.*" # on every version tag will build a new android artifact.
+    branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   build:
     name: Build APK
@@ -35,6 +36,8 @@ jobs:
 
       - name: Build APPBUNDLE
         run: flutter build appbundle --release
+
+      - run: ls build/app/outputs/apk/release/
 
       - name: Create Github Release
         uses: ncipollo/release-action@v1
