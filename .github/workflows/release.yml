@@ -10,7 +10,6 @@ on:
 jobs:
   release_android:
     name: Building Deposit App (Android)
-    needs: [ flutter_test ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
